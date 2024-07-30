@@ -1,26 +1,24 @@
 import os
 
-from sqlmodel import Field , SQLModel, create_engine
-from sqlalchemy import TIMESTAMP
-
+from sqlmodel import Field, Session, SQLModel, create_engine, select
+from datetime import datetime
 
 class ReportModel(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
-    date_time : TIMESTAMP
-    score_train : int
-    score_test : int
-    precision_train : int
-    precision_test : int
-    recall_train : int
-    recall_test: int 
-    fscore_train : int
-    fscore_test : int
+    date_time : datetime
+    score_train : float
+    score_test : float
+    precision_train : float
+    precision_test : float
+    recall_train : float
+    recall_test: float 
+    fscore_train : float
+    fscore_test : float
+    log_loss_train : float
+    log_loss_test : float
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 engine = create_engine(DATABASE_URL , echo=True)
 
-def create_db_and_tables():
-
-    SQLModel.metadata.create_all(engine)

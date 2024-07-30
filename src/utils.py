@@ -29,25 +29,19 @@ def split_data(data):
 
     return x_train , x_test , y_train , y_test
 
-def scaler_data(x_train , x_test):
-    scaler = StandardScaler()
-    x_train_proced = scaler.fit_transform(x_train)
-    x_test_proced = scaler.transform(x_test)
 
-    return x_train_proced , x_test_proced
-
-
-def search_best_param(model):
-    best_model = GridSearchCV(
+def search_best_param(model , x_trian , y_train):
+    grid_gb = GridSearchCV(
     estimator=model ,
     param_grid=config.PARAM_GRID ,
     n_jobs= -1 ,
     scoring='accuracy' ,
     cv = 5,
-    verbose=1
-    )
+    verbose=1)
 
-    return best_model
+    grid_gb.fit(x_trian , y_train)
+
+    return grid_gb
 
 def load_model(model):
 
