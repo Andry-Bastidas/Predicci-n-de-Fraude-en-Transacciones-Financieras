@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=zxcvbnm
+      - POSTGRES_DB=basedata
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '8080:8080'
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=my_secure_password
+    depends_on:
+      - db
+  web:
+    build: .
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn api.main:app --reload --host 0.0.0.0 && prefect server start'
+    volumes:
+      - .:/api
+    ports:
+      - "5004:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:zxcvbnm@db:5432/basedata
+    depends_on:
+      - db
+
+
+volumes:
+  postgres_data:
+  grafana_data: {}
+
+    
